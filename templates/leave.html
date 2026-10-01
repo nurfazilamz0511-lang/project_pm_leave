@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block title %}Cuti{% endblock %}
+{% block breadcrumb %}Cuti{% endblock %}
+
+{% block content %}
+<section class="page-head">
+    <div>
+        <div class="eyebrow">LEAVE MANAGEMENT</div>
+        <h1>Pengajuan Cuti</h1>
+        <p>Ajukan cuti baru dan pantau proses approval pengajuan Anda.</p>
+    </div>
+</section>
+
+<div class="grid-two leave-grid">
+    <section class="panel form-panel">
+        <div class="panel-head">
+            <div>
+                <h2>Ajukan Cuti Baru</h2>
+                <p>Isi data pengajuan dengan lengkap.</p>
+            </div>
+        </div>
+
+        <form method="POST" class="leave-form">
+            <div class="form-group">
+                <label>Jenis Cuti</label>
+                <select name="type" required>
+                    <option>Cuti Tahunan</option>
+                    <option>Cuti Pribadi</option>
+                    <option>Cuti Sakit</option>
+                    <option>Cuti Khusus</option>
+                </select>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Tanggal Mulai</label>
+                    <input type="date" name="start" required>
+                </div>
+                <div class="form-group">
+                    <label>Tanggal Selesai</label>
+                    <input type="date" name="end" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Alasan Cuti</label>
+                <textarea name="reason" rows="4" placeholder="Jelaskan alasan pengajuan cuti..." required></textarea>
+            </div>
+
+            <button class="btn btn-primary" type="submit">Kirim Pengajuan <span>→</span></button>
+        </form>
+    </section>
+
+    <section class="panel balance-panel">
+        <div class="balance-icon">◫</div>
+        <div class="eyebrow">LEAVE BALANCE</div>
+        <h2>12 Hari</h2>
+        <p>Kuota cuti tahunan</p>
+        <div class="balance-line"><span></span></div>
+        <div class="balance-meta"><span>Terpakai</span><strong>{{ used_days }} hari</strong></div>
+        <div class="balance-meta"><span>Tersisa</span><strong>{{ remaining }} hari</strong></div>
+    </section>
+</div>
+
+<section class="panel history-panel">
+    <div class="panel-head">
+        <div>
+            <h2>Riwayat Pengajuan</h2>
+            <p>Daftar seluruh pengajuan cuti Anda.</p>
+        </div>
+    </div>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr><th>Jenis</th><th>Periode</th><th>Durasi</th><th>Alasan</th><th>Status</th></tr>
+            </thead>
+            <tbody>
+            {% for item in requests %}
+                <tr>
+                    <td><strong>{{ item.type }}</strong></td>
+                    <td>{{ item.start }}{% if item.start != item.end %} — {{ item.end }}{% endif %}</td>
+                    <td>{{ item.days }} hari</td>
+                    <td>{{ item.reason }}</td>
+                    <td><span class="status {{ 'approved' if item.status == 'Disetujui' else 'rejected' if item.status.startswith('Ditolak') else 'pending' }}">{{ item.status }}</span></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

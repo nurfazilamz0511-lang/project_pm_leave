@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login — PM Leave</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="login-page">
+    <div class="login-decoration one"></div>
+    <div class="login-decoration two"></div>
+
+    <div class="login-card">
+        <div class="login-logo">
+            <div class="brand-mark large">PM</div>
+            <div class="brand-name">PM LEAVE</div>
+            <div class="brand-sub">Employee Leave Management</div>
+        </div>
+
+        <div class="login-heading">
+            <h1>Selamat datang 👋</h1>
+            <p>Masuk untuk mengelola pengajuan cuti Anda.</p>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash {{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST" class="login-form">
+            <label>Username</label>
+            <div class="input-wrap">
+                <span>◎</span>
+                <input type="text" name="username" placeholder="Masukkan username" autocomplete="username" required>
+            </div>
+
+            <label>Password</label>
+            <div class="input-wrap">
+                <span>◆</span>
+                <input type="password" name="password" id="password" placeholder="Masukkan password" autocomplete="current-password" required>
+                <button type="button" class="eye-btn" id="togglePassword">Lihat</button>
+            </div>
+
+            <button class="btn btn-primary login-btn" type="submit">Masuk ke PM Leave <span>→</span></button>
+        </form>
+
+        <div class="demo-info">
+            <span>Demo login — password semua akun: <strong>password123</strong></span>
+            <div><strong>Employee:</strong> nurfazila</div>
+            <div><strong>Foreman:</strong> foreman</div>
+            <div><strong>Manager:</strong> manager</div>
+            <div><strong>HR:</strong> hr</div>
+        </div>
+
+        <p class="copyright">© 2026 PM Leave. Employee Leave Management System.</p>
+    </div>
+
+<script>
+const btn = document.getElementById('togglePassword');
+const password = document.getElementById('password');
+btn.addEventListener('click', () => {
+    const hidden = password.type === 'password';
+    password.type = hidden ? 'text' : 'password';
+    btn.textContent = hidden ? 'Sembunyikan' : 'Lihat';
+});
+</script>
+</body>
+</html>

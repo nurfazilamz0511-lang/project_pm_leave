@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Detail Approval{% endblock %}
+{% block breadcrumb %}Detail Approval{% endblock %}
+
+{% block content %}
+<section class="page-head">
+    <div>
+        <div class="eyebrow">APPROVAL DETAIL</div>
+        <h1>Detail Pengajuan Cuti</h1>
+        <p>Periksa data pengajuan sebelum memberikan keputusan.</p>
+    </div>
+    <a href="{{ url_for('approval') }}" class="btn btn-secondary">← Kembali</a>
+</section>
+
+<div class="grid-two">
+    <section class="panel">
+        <div class="panel-head"><div><h2>Informasi Pengajuan</h2></div></div>
+        <div class="detail-list">
+            <div><span>Karyawan</span><strong>{{ item.employee_name }}</strong></div>
+            <div><span>Username</span><strong>{{ item.employee }}</strong></div>
+            <div><span>Jenis Cuti</span><strong>{{ item.type }}</strong></div>
+            <div><span>Periode</span><strong>{{ item.start }}{% if item.start != item.end %} — {{ item.end }}{% endif %}</strong></div>
+            <div><span>Durasi</span><strong>{{ item.days }} hari</strong></div>
+            <div><span>Status</span><strong><span class="status pending">{{ item.status }}</span></strong></div>
+            <div><span>Alasan</span><strong>{{ item.reason }}</strong></div>
+        </div>
+    </section>
+
+    <section class="panel">
+        <div class="panel-head"><div><h2>Riwayat Approval</h2><p>Jejak proses persetujuan pengajuan.</p></div></div>
+        {% if item.history %}
+        <div class="approval-timeline">
+            {% for log in item.history %}
+            <div class="timeline-item">
+                <div class="timeline-dot">✓</div>
+                <div><strong>{{ log.role }} — {{ log.action }}</strong><span>{{ log.by }} · {{ log.at }}</span></div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty">Belum ada proses approval.</div>
+        {% endif %}
+
+        {% if item.status == ({'Foreman': 'Menunggu Foreman', 'Manager': 'Menunggu Manager', 'HR': 'Menunggu HR'}[role]) %}
+        <div class="form-actions approval-actions">
+            <form method="POST" action="{{ url_for('process_approval', request_id=item.id, action='approve') }}">
+                <button class="btn btn-primary" type="submit">✓ Setujui Pengajuan</button>
+            </form>
+            <form method="POST" action="{{ url_for('process_approval', request_id=item.id, action='reject') }}">
+                <button class="btn btn-danger" type="submit">Tolak Pengajuan</button>
+            </form>
+        </div>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}

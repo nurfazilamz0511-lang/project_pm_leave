@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% block title %}Approval Cuti{% endblock %}
+{% block breadcrumb %}Approval Cuti{% endblock %}
+
+{% block content %}
+<section class="page-head">
+    <div>
+        <div class="eyebrow">LEAVE APPROVAL</div>
+        <h1>Approval Cuti</h1>
+        <p>Daftar pengajuan yang menunggu persetujuan {{ role }}.</p>
+    </div>
+</section>
+
+<section class="panel history-panel">
+    <div class="panel-head">
+        <div>
+            <h2>Antrian Approval</h2>
+            <p>Status yang harus diproses: <strong>{{ required_status }}</strong></p>
+        </div>
+        <span class="status pending">{{ queue|length }} Pengajuan</span>
+    </div>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Karyawan</th>
+                    <th>Jenis</th>
+                    <th>Periode</th>
+                    <th>Durasi</th>
+                    <th>Alasan</th>
+                    <th>Status</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for item in queue %}
+                <tr>
+                    <td><strong>{{ item.employee_name }}</strong><br><small>{{ item.employee }}</small></td>
+                    <td>{{ item.type }}</td>
+                    <td>{{ item.start }}{% if item.start != item.end %} — {{ item.end }}{% endif %}</td>
+                    <td>{{ item.days }} hari</td>
+                    <td>{{ item.reason }}</td>
+                    <td><span class="status pending">{{ item.status }}</span></td>
+                    <td>
+                        <div class="action-group">
+                            <a class="btn btn-secondary btn-small" href="{{ url_for('approval_detail', request_id=item.id) }}">Detail</a>
+                            <form method="POST" action="{{ url_for('process_approval', request_id=item.id, action='approve') }}">
+                                <button class="btn btn-primary btn-small" type="submit">Setujui</button>
+                            </form>
+                            <form method="POST" action="{{ url_for('process_approval', request_id=item.id, action='reject') }}">
+                                <button class="btn btn-danger btn-small" type="submit">Tolak</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="7" class="empty">Tidak ada pengajuan yang menunggu approval {{ role }}.</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

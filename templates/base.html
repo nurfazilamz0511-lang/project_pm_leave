@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}PM Leave{% endblock %} — PM Leave</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block head %}{% endblock %}
+</head>
+<body>
+<div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+        <div class="brand">
+            <div class="brand-mark">PM</div>
+            <div>
+                <div class="brand-name">PM LEAVE</div>
+                <div class="brand-sub">Employee Leave System</div>
+            </div>
+        </div>
+
+        <div class="profile-mini">
+            <div class="avatar">{{ account.name[:1] }}</div>
+            <div>
+                <strong>{{ account.name }}</strong>
+                <span>{{ account.position }}</span>
+            </div>
+        </div>
+
+        <div class="nav-label">MENU UTAMA</div>
+        <nav class="nav">
+            <a class="{{ 'active' if active == 'dashboard' else '' }}" href="{{ url_for('dashboard') }}">
+                <span class="nav-icon">⌂</span><span>Dashboard</span>
+            </a>
+            <a class="{{ 'active' if active == 'leave' else '' }}" href="{{ url_for('cuti') }}">
+                <span class="nav-icon">◫</span><span>Cuti</span>
+            </a>
+            {% if can_approve %}
+            <a class="{{ 'active' if active == 'approval' else '' }}" href="{{ url_for('approval') }}">
+                <span class="nav-icon">✓</span><span>Approval</span>
+            </a>
+            {% endif %}
+        </nav>
+
+        <div class="nav-label settings-label">AKUN</div>
+        <nav class="nav">
+            <a class="{{ 'active' if active == 'settings' else '' }}" href="{{ url_for('settings') }}">
+                <span class="nav-icon">⚙</span><span>Pengaturan Akun</span>
+            </a>
+            <a href="{{ url_for('logout') }}" class="logout-link">
+                <span class="nav-icon">↪</span><span>Logout</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <span class="status-dot"></span>
+            Sistem aktif
+        </div>
+    </aside>
+
+    <main class="main">
+        <header class="topbar">
+            <button class="menu-btn" id="menuBtn" aria-label="Buka menu">☰</button>
+            <div class="breadcrumb">PM Leave <span>/</span> {% block breadcrumb %}Dashboard{% endblock %}</div>
+            <div class="top-user">
+                <div class="top-avatar">{{ account.name[:1] }}</div>
+                <div class="top-user-text">
+                    <strong>{{ account.name }}</strong>
+                    <span>{{ current_role }}</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="content">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div class="flash-wrap">
+                    {% for category, message in messages %}
+                        <div class="flash {{ category }}">
+                            <span>{{ '✓' if category == 'success' else '!' }}</span>{{ message }}
+                        </div>
+                    {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+</div>
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

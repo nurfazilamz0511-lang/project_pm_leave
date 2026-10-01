@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block breadcrumb %}Dashboard{% endblock %}
+
+{% block content %}
+<section class="page-head">
+    <div>
+        <div class="eyebrow">OVERVIEW</div>
+        <h1>Dashboard <span class="wave">✦</span></h1>
+        <p>Ringkasan cuti dan aktivitas pengajuan Anda.</p>
+    </div>
+    <a href="{{ url_for('cuti') }}" class="btn btn-primary">+ Ajukan Cuti</a>
+</section>
+
+<div class="stat-grid">
+    <div class="stat-card">
+        <div class="stat-top"><span class="stat-icon purple">◫</span><span class="stat-badge">Tahun ini</span></div>
+        <div class="stat-value">{{ remaining }}</div>
+        <div class="stat-label">Sisa Hari Cuti</div>
+        <div class="progress"><span style="width: {{ (remaining / 12 * 100) if remaining <= 12 else 100 }}%"></span></div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-top"><span class="stat-icon blue">✓</span><span class="stat-badge blue-badge">Disetujui</span></div>
+        <div class="stat-value">{{ approved }}</div>
+        <div class="stat-label">Cuti Disetujui</div>
+        <div class="stat-note">Pengajuan telah disetujui</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-top"><span class="stat-icon orange">◷</span><span class="stat-badge orange-badge">Proses</span></div>
+        <div class="stat-value">{{ pending }}</div>
+        <div class="stat-label">Menunggu Persetujuan</div>
+        <div class="stat-note">Sedang diproses</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-top"><span class="stat-icon green">▣</span><span class="stat-badge green-badge">Total</span></div>
+        <div class="stat-value">{{ total }}</div>
+        <div class="stat-label">Total Pengajuan</div>
+        <div class="stat-note">Seluruh pengajuan cuti</div>
+    </div>
+</div>
+
+<div class="grid-two">
+    <section class="panel">
+        <div class="panel-head">
+            <div>
+                <h2>Pengajuan Terbaru</h2>
+                <p>Riwayat aktivitas cuti terbaru.</p>
+            </div>
+            <a href="{{ url_for('cuti') }}" class="text-link">Lihat semua →</a>
+        </div>
+
+        <div class="request-list">
+        {% for item in recent %}
+            <div class="request-row">
+                <div class="request-icon">{{ '✓' if item.status == 'Disetujui' else ('!' if item.status.startswith('Ditolak') else '◷') }}</div>
+                <div class="request-main">
+                    <strong>{{ item.type }}</strong>
+                    <span>{{ item.start }}{% if item.start != item.end %} — {{ item.end }}{% endif %}</span>
+                </div>
+                <div class="request-days">{{ item.days }} hari</div>
+                <span class="status {{ 'approved' if item.status == 'Disetujui' else 'rejected' if item.status.startswith('Ditolak') else 'pending' }}">{{ item.status }}</span>
+            </div>
+        {% else %}
+            <div class="empty">Belum ada pengajuan cuti.</div>
+        {% endfor %}
+        </div>
+    </section>
+
+    {% if can_approve %}
+    <section class="panel">
+        <div class="panel-head">
+            <div>
+                <h2>Antrian Approval</h2>
+                <p>Pengajuan yang perlu diproses sebagai {{ current_role }}.</p>
+            </div>
+            <a href="{{ url_for('approval') }}" class="text-link">Buka Approval →</a>
+        </div>
+        {% if approval_queue %}
+        <div class="request-list">
+        {% for item in approval_queue[:4] %}
+            <div class="request-row">
+                <div class="request-icon">◷</div>
+                <div class="request-main"><strong>{{ item.employee_name }}</strong><span>{{ item.type }} · {{ item.days }} hari</span></div>
+                <span class="status pending">{{ item.status }}</span>
+            </div>
+        {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty">Tidak ada pengajuan yang menunggu approval.</div>
+        {% endif %}
+    </section>
+    {% endif %}
+
+    <section class="panel welcome-panel">
+        <div class="welcome-illustration">☼</div>
+        <div>
+            <div class="eyebrow">MY ACCOUNT</div>
+            <h2>Halo, {{ account.name }}!</h2>
+            <p>Pastikan data akun Anda selalu terbaru agar proses pengajuan cuti berjalan lancar.</p>
+            <a href="{{ url_for('settings') }}" class="btn btn-secondary">Pengaturan Akun</a>
+        </div>
+    </section>
+</div>
+{% endblock %}
